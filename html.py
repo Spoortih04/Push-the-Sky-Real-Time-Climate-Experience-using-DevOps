@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>🌤 Weather Checker (Slim Response)</title>
+  <style>
+    body {
+      background-color: #121212;
+      color: #ffffff;
+      font-family: 'Arial', sans-serif;
+      text-align: center;
+      padding: 3rem;
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+
+    h1 {
+      color: #00bcd4;
+      margin-bottom: 1rem;
+    }
+
+    input, button {
+      padding: 12px;
+      font-size: 1.2rem;
+      margin: 10px 0;
+      border-radius: 6px;
+      border: none;
+      outline: none;
+    }
+
+    input {
+      width: 250px;
+      background-color: #333;
+      color: white;
+    }
+
+    button {
+      background-color: #00bcd4;
+      color: white;
+      cursor: pointer;
+      width: 260px;
+      font-weight: bold;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #0097a7;
+    }
+
+    .result {
+      margin-top: 20px;
+      background: #1f1f1f;
+      padding: 20px;
+      border-radius: 10px;
+      display: inline-block;
+      max-width: 500px;
+      width: 100%;
+      box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    img {
+      width: 80px;
+      height: 80px;
+      margin: 10px 0;
+    }
+
+    p {
+      font-size: 1.1rem;
+      line-height: 1.6;
+      margin: 5px 0;
+    }
+
+    .error {
+      color: red;
+      font-size: 1.1rem;
+    }
+
+    .loading {
+      color: #00bcd4;
+      font-size: 1.2rem;
+    }
+
+  </style>
+</head>
+<body>
+  <h1>🌤 Weather--Checkers</h1>
+  <input type="text" id="cityInput" placeholder="Enter city (e.g. Delhi)" />
+  <button onclick="getWeather()">Get Weather</button>
+
+  <div id="output" class="result"></div>
+
+  <script>
+    async function getWeather() {
+      const city = document.getElementById("cityInput").value.trim();
+      const apiKey = "61b99a3123a44b718a4110044252004"; // Your API key
+      const url = https://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${encodeURIComponent(city)}&aqi=no;
+
+      const output = document.getElementById("output");
+      output.innerHTML = "<p class='loading'>Fetching weather...</p>";
+
+      try {
+        const res = await fetch(url);
+        const data = await res.json();
+
+        if (data && data.current) {
+          const w = data.current;
+          output.innerHTML = `
+            <h2>${data.location.name}, ${data.location.country}</h2>
+            <img src="${w.condition.icon}" alt="${w.condition.text}" />
+            <p><strong>Temperature:</strong> ${w.temp_c}°C</p>
+            <p><strong>Feels Like:</strong> ${w.feelslike_c}°C</p>
+            <p><strong>Condition:</strong> ${w.condition.text}</p>
+            <p><strong>Humidity:</strong> ${w.humidity}%</p>
+            <p><strong>Wind:</strong> ${w.wind_kph} km/h</p>
+            <p><strong>UV Index:</strong> ${w.uv}</p>
+          `;
+        } else {
+          output.innerHTML = <p class="error">No weather data found for "<strong>${city}</strong>".</p>;
+        }
+      } catch (error) {
+        console.error(error);
+        output.innerHTML = <p class="error">Error fetching data. Please check the city name or API key.</p>;
+      }
+    }
+  </script>
+</body>
+</html>
